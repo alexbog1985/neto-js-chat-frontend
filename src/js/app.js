@@ -1,9 +1,7 @@
-// import HelpDesk from './HelpDesk';
-// import TicketService from './TicketService';
-//
-// const root = document.getElementById('root');
-//
-// const ticketService = new TicketService();
-// const app = new HelpDesk(root, ticketService);
-//
-// app.init();
+import Chat from '../components/Chat/Chat';
+import ChatView from '../components/ChatView/ChatView';
+
+const root = document.querySelector('#root');
+
+const app = new Chat(root);
+app.init(root);
