@@ -1,4 +1,4 @@
-const apiUrl = process.env.API_URL || 'http://localhost:3000';
+const apiUrl = 'http://localhost:3000';
 
 export default class Api {
   async registerUser(nickName) {

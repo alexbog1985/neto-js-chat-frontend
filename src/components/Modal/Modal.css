@@ -76,3 +76,7 @@
     background-color: #9fb6df;
     cursor: not-allowed;
 }
+
+.hidden {
+    display: none;
+}

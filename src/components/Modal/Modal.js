@@ -1,17 +1,24 @@
 import './Modal.css';
 
 export default class Modal {
-  constructor(root) {
-    this.root = root;
+  constructor(onJoin) {
+    if (typeof onJoin !== 'function') {
+      throw new Error('Modal constructor must be a function');
+    }
+
+    this.onJoin = onJoin;
 
     this.modalElement = null;
+    this.modalForm = null;
     this.nicknameInput = null;
-    this.joinBtn = null;
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleKeydown = this.handleKeydown.bind(this);
   }
 
   createModal() {
     this.modalElement = document.createElement('div');
-    this.modalElement.className = 'modal';
+    this.modalElement.className = 'modal hidden';
 
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content';
@@ -24,27 +31,60 @@ export default class Modal {
 
     this.nicknameInput = document.createElement('input');
     this.nicknameInput.type = 'text';
+    this.nicknameInput.minLength = 2;
     this.nicknameInput.required = true;
     this.nicknameInput.className = 'nickname-input';
+    this.nicknameInput.placeholder = 'Минимум 2 символа';
+    this.nicknameInput.autofocus = true;
 
-    this.joinBtn = document.createElement('button');
-    this.joinBtn.type = 'submit';
-    this.joinBtn.textContent = 'Подключиться';
+    const joinBtn = document.createElement('button');
+    joinBtn.type = 'submit';
+    joinBtn.textContent = 'Подключиться';
 
-    modalForm.append(this.nicknameInput, this.joinBtn);
+    modalForm.addEventListener('submit', this.handleSubmit);
+    this.modalElement.addEventListener('keydown', this.handleKeydown);
 
+    modalForm.append(this.nicknameInput, joinBtn);
     modalContent.append(modalTitle, modalForm);
-
     this.modalElement.append(modalContent);
 
     return this.modalElement;
   }
 
-  hideModal() {
-    this.modalElement.style.display = 'none';
+  handleSubmit(e) {
+    e.preventDefault();
+    const value = this.nicknameInput.value.trim();
+    if (value.length >= 2) {
+      this.onJoin(value);
+      // this.hideModal();
+    } else {
+      this.nicknameInput.reportValidity();
+    }
+  }
+
+  handleKeydown(e) {
+    if (e.key === 'Escape') {
+      this.hideModal();
+    }
   }
 
   showModal() {
-    this.modalElement.style.display = 'flex';
+    if (!this.modalElement) return;
+    this.modalElement.classList.remove('hidden');
+    this.nicknameInput.focus();
+    this.nicknameInput.value = '';
+  }
+
+  hideModal() {
+    if (!this.modalElement) return;
+    this.modalElement.classList.add('hidden');
+  }
+
+  destroy() {
+    if (this.modalElement && this.modalElement.parentNode) {
+      this.modalElement.remove();
+    }
+    this.modalElement = null;
+    this.nicknameInput = null;
   }
 }
