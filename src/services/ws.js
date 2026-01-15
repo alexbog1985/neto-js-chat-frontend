@@ -17,15 +17,35 @@ export default class WS {
     this.socket.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data);
+        console.log(data);
+
+
         if (Array.isArray(data)) {
           if (this.onUsersUpdateCallback) {
             this.onUsersUpdateCallback(data);
+          }
+        } else if (data.type === 'send') {
+          if (this.onMessageCallback) {
+            this.onMessageCallback(data);
           }
         }
       } catch (error) {
         console.error(error);
       }
     };
+  }
+
+  sendMessage(message) {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      const messageData = {
+        type: 'send',
+        message,
+        user: this.currentUser,
+      };
+      this.socket.send(JSON.stringify(messageData));
+      return true;
+    }
+    return false;
   }
 
   onMessage(callback) {
@@ -38,9 +58,5 @@ export default class WS {
 
   isConnected() {
     return this.socket.readyState === WebSocket.OPEN;
-  }
-
-  getUsers() {
-
   }
 }

@@ -16,10 +16,10 @@ export default class ChatView {
     const sidebarTitle = document.createElement('h3');
     sidebarTitle.textContent = 'Пользователи онлайн';
 
-    const userList = document.createElement('ul');
-    userList.className = 'user-list';
+    this.userList = document.createElement('ul');
+    this.userList.className = 'user-list';
 
-    sidebar.append(sidebarTitle, userList);
+    sidebar.append(sidebarTitle, this.userList);
 
     const mainChat = document.createElement('div');
     mainChat.className = 'main-chat';
@@ -47,5 +47,17 @@ export default class ChatView {
     this.chatContainer.append(sidebar, mainChat);
 
     return this.chatContainer;
+  }
+  
+  updateUsersList(users) {
+    if (!this.userList) return;
+
+    this.userList.innerHTML = '';
+
+    users.forEach((user) => {
+      const userItem = document.createElement('li');
+      userItem.textContent = user.name;
+      this.userList.append(userItem);
+    });
   }
 }

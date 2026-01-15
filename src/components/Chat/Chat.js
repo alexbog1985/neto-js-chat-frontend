@@ -13,6 +13,7 @@ export default class Chat {
     this.socket = new WS();
 
     this.onJoin = this.onJoin.bind(this);
+    this.handleUsersUpdate = this.handleUsersUpdate.bind(this);
 
     this.modal = new Modal(this.onJoin);
     this.chatView = new ChatView();
@@ -56,6 +57,18 @@ export default class Chat {
 
   handleUsersUpdate(users) {
     this.users = users;
+    this.chatView.updateUsersList(users);
     console.log(users);
+  }
+
+  onSendMessage(message) {
+    if (message && this.socket.isConnected()) {
+      const ownMessage = {
+        type: 'message',
+        message,
+        user: this.currentUser,
+      };
+      this.handleNewMessage(ownMessage);
+    }
   }
 }
