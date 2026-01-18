@@ -16,6 +16,7 @@ export default class Chat {
     this.handleUsersUpdate = this.handleUsersUpdate.bind(this);
     this.onSendMessage = this.onSendMessage.bind(this);
     this.handleNewMessage = this.handleNewMessage.bind(this);
+    this.handleBeforeUnload = this.handleBeforeUnload.bind(this);
 
     this.modal = new Modal(this.onJoin);
     this.chatView = new ChatView();
@@ -23,21 +24,19 @@ export default class Chat {
 
   init() {
     this.container.innerHTML = '';
-    this.currentUser = this.getCurrentUser();
+    this.currentUser = null;
 
     this.container.append(this.modal.createModal());
     this.container.append(this.chatView.createChatView());
 
     this.chatView.init(this.onSendMessage);
 
-    if (!this.currentUser) {
-      this.modal.showModal();
-    } else {
-      this.socket.connect(this.currentUser);
-    }
+    this.modal.showModal();
 
     this.socket.onUsersUpdate(this.handleUsersUpdate);
     this.socket.onMessage(this.handleNewMessage);
+
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
   }
 
   async onJoin(nickname) {
@@ -46,7 +45,6 @@ export default class Chat {
 
       if (response.status === 'ok') {
         this.currentUser = response.user;
-        this.saveCurrentUserToLocalStorage(this.currentUser);
 
         this.modal.hideModal();
         this.socket.connect(this.currentUser);
@@ -56,15 +54,6 @@ export default class Chat {
       console.error('Ошибка регистрации: ', error);
       this.modal.showError(error.message);
     }
-  }
-
-  saveCurrentUserToLocalStorage(user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-  }
-
-  getCurrentUser() {
-    const currentUser = localStorage.getItem('currentUser');
-    return JSON.parse(currentUser);
   }
 
   handleUsersUpdate(users) {
@@ -83,5 +72,11 @@ export default class Chat {
     const isOwnMessage = this.currentUser && messageData && messageData.user.id === this.currentUser.id;
 
     this.chatView.addMessage(messageData, isOwnMessage);
+  }
+
+  handleBeforeUnload() {
+    if (this.socket && this.currentUser) {
+      this.socket.sendExit();
+    }
   }
 }

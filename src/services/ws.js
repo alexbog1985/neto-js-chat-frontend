@@ -19,7 +19,6 @@ export default class WS {
         const data = JSON.parse(e.data);
         console.log(data);
 
-
         if (Array.isArray(data)) {
           if (this.onUsersUpdateCallback) {
             this.onUsersUpdateCallback(data);
@@ -32,6 +31,14 @@ export default class WS {
       } catch (error) {
         console.error(error);
       }
+    };
+
+    this.socket.onclose = (event) => {
+      console.log('WebSocket closed:', event.code, event.reason);
+    };
+    
+    this.socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
     };
   }
 
@@ -46,6 +53,17 @@ export default class WS {
       return true;
     }
     return false;
+  }
+
+  sendExit() {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN && this.currentUser) {
+      const exitData = {
+        type: 'exit',
+        user: this.currentUser,
+      };
+      this.socket.send(JSON.stringify(exitData));
+      console.log('Exit message sent for user:', this.currentUser.name);
+    }
   }
 
   onMessage(callback) {
