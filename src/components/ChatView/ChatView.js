@@ -1,9 +1,13 @@
 import './ChatView.css';
 
 export default class ChatView {
-  constructor(root) {
-    this.root = root;
+  constructor() {
     this.chatContainer = null;
+    this.chatContainer = null;
+    this.messagesContainer = null;
+    this.messageForm = null;
+    this.messageInput = null;
+    this.onSendMessage = null;
   }
 
   createChatView() {
@@ -24,31 +28,46 @@ export default class ChatView {
     const mainChat = document.createElement('div');
     mainChat.className = 'main-chat';
 
-    const messagesContainer = document.createElement('div');
-    messagesContainer.className = 'messages-container';
+    this.messagesContainer = document.createElement('div');
+    this.messagesContainer.className = 'messages-container';
 
-    const messageForm = document.createElement('form');
-    messageForm.className = 'message-form';
+    this.messageForm = document.createElement('form');
+    this.messageForm.className = 'message-form';
 
-    const messageInput = document.createElement('input');
-    messageInput.type = 'text';
-    messageInput.placeholder = 'Ваше сообщение';
-    messageInput.required = true;
+    this.messageInput = document.createElement('input');
+    this.messageInput.type = 'text';
+    this.messageInput.placeholder = 'Ваше сообщение';
+    this.messageInput.required = true;
 
     const sendBtn = document.createElement('button');
     sendBtn.className = 'send-btn';
     sendBtn.type = 'submit';
     sendBtn.textContent = 'Отправить';
 
-    messageForm.append(messageInput, sendBtn);
+    this.messageForm.append(this.messageInput, sendBtn);
 
-    mainChat.append(messagesContainer, messageForm);
+    mainChat.append(this.messagesContainer, this.messageForm);
 
     this.chatContainer.append(sidebar, mainChat);
 
     return this.chatContainer;
   }
-  
+
+  init(onSendMessage) {
+    this.onSendMessage = onSendMessage;
+
+    if (this.messageForm) {
+      this.messageForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const message = this.messageInput.value.trim();
+        if (message && this.onSendMessage) {
+          this.onSendMessage(message);
+          this.messageInput.value = '';
+        }
+      });
+    }
+  }
+
   updateUsersList(users) {
     if (!this.userList) return;
 
@@ -59,5 +78,15 @@ export default class ChatView {
       userItem.textContent = user.name;
       this.userList.append(userItem);
     });
+  }
+
+  addMessage(messageData, isOwnMessage) {
+    if (!this.messagesContainer) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.className = `message ${isOwnMessage ? 'sent' : 'received'}`;
+    messageElement.textContent = messageData.message;
+
+    this.messagesContainer.append(messageElement);
   }
 }

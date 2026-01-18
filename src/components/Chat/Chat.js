@@ -14,6 +14,8 @@ export default class Chat {
 
     this.onJoin = this.onJoin.bind(this);
     this.handleUsersUpdate = this.handleUsersUpdate.bind(this);
+    this.onSendMessage = this.onSendMessage.bind(this);
+    this.handleNewMessage = this.handleNewMessage.bind(this);
 
     this.modal = new Modal(this.onJoin);
     this.chatView = new ChatView();
@@ -27,12 +29,16 @@ export default class Chat {
     this.container.append(this.modal.createModal());
     this.container.append(this.chatView.createChatView());
 
+    this.chatView.init(this.onSendMessage);
+
     if (!this.currentUser) {
       this.modal.showModal();
+    } else {
+      this.socket.connect(this.currentUser);
     }
-    this.socket.connect();
 
     this.socket.onUsersUpdate(this.handleUsersUpdate);
+    this.socket.onMessage(this.handleNewMessage);
   }
 
   async onJoin(nickname) {
@@ -43,6 +49,8 @@ export default class Chat {
       this.saveCurrentUserToLocalStorage(this.currentUser);
 
       this.modal.hideModal();
+      this.socket.connect(this.currentUser);
+      this.socket.onMessage(this.handleNewMessage);
     }
   }
 
@@ -63,12 +71,13 @@ export default class Chat {
 
   onSendMessage(message) {
     if (message && this.socket.isConnected()) {
-      const ownMessage = {
-        type: 'message',
-        message,
-        user: this.currentUser,
-      };
-      this.handleNewMessage(ownMessage);
+      this.socket.sendMessage(message);
     }
+  }
+
+  handleNewMessage(messageData) {
+    const isOwnMessage = this.currentUser && messageData && messageData.user.id === this.currentUser.id;
+
+    this.chatView.addMessage(messageData, isOwnMessage);
   }
 }
