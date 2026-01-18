@@ -85,8 +85,18 @@ export default class ChatView {
 
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isOwnMessage ? 'sent' : 'received'}`;
-    messageElement.textContent = messageData.message;
 
+    const senderElement = document.createElement('div');
+    senderElement.className = 'message-sender';
+    senderElement.textContent = isOwnMessage ? 'Вы' : messageData.user.name;
+
+    const textElement = document.createElement('div');
+    textElement.className = 'message-text';
+    textElement.textContent = messageData.message;
+
+    messageElement.append(senderElement, textElement);
     this.messagesContainer.append(messageElement);
+
+    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
   }
 }
