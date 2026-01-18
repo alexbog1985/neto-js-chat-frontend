@@ -24,7 +24,6 @@ export default class Chat {
   init() {
     this.container.innerHTML = '';
     this.currentUser = this.getCurrentUser();
-    console.log(this.currentUser);
 
     this.container.append(this.modal.createModal());
     this.container.append(this.chatView.createChatView());
@@ -42,15 +41,20 @@ export default class Chat {
   }
 
   async onJoin(nickname) {
-    const response = await this.api.registerUser(nickname);
+    try {
+      const response = await this.api.registerUser(nickname);
 
-    if (response.status === 'ok') {
-      this.currentUser = response.user;
-      this.saveCurrentUserToLocalStorage(this.currentUser);
+      if (response.status === 'ok') {
+        this.currentUser = response.user;
+        this.saveCurrentUserToLocalStorage(this.currentUser);
 
-      this.modal.hideModal();
-      this.socket.connect(this.currentUser);
-      this.socket.onMessage(this.handleNewMessage);
+        this.modal.hideModal();
+        this.socket.connect(this.currentUser);
+        this.socket.onMessage(this.handleNewMessage);
+      }
+    } catch (error) {
+      console.error('Ошибка регистрации: ', error);
+      this.modal.showError(error.message);
     }
   }
 

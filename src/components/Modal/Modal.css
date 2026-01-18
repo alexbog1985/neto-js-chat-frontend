@@ -80,3 +80,11 @@
 .hidden {
     display: none;
 }
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: 5px;
+    min-height: 20px;
+    text-align: center;
+}

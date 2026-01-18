@@ -11,6 +11,7 @@ export default class Modal {
     this.modalElement = null;
     this.modalForm = null;
     this.nicknameInput = null;
+    this.errorElement = null;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleKeydown = this.handleKeydown.bind(this);
@@ -37,6 +38,9 @@ export default class Modal {
     this.nicknameInput.placeholder = 'Минимум 2 символа';
     this.nicknameInput.autofocus = true;
 
+    this.errorElement = document.createElement('div');
+    this.errorElement.className = 'error-message';
+
     const joinBtn = document.createElement('button');
     joinBtn.type = 'submit';
     joinBtn.textContent = 'Подключиться';
@@ -44,7 +48,7 @@ export default class Modal {
     modalForm.addEventListener('submit', this.handleSubmit);
     this.modalElement.addEventListener('keydown', this.handleKeydown);
 
-    modalForm.append(this.nicknameInput, joinBtn);
+    modalForm.append(this.nicknameInput, this.errorElement, joinBtn);
     modalContent.append(modalTitle, modalForm);
     this.modalElement.append(modalContent);
 
@@ -73,6 +77,21 @@ export default class Modal {
     this.modalElement.classList.remove('hidden');
     this.nicknameInput.focus();
     this.nicknameInput.value = '';
+    this.clearError();
+  }
+
+  showError(message) {
+    if (this.errorElement) {
+      this.errorElement.textContent = message;
+      this.nicknameInput.focus();
+      this.nicknameInput.select();
+    }
+  }
+
+  clearError() {
+    if (this.errorElement) {
+      this.errorElement.textContent = '';
+    }
   }
 
   hideModal() {
@@ -86,5 +105,6 @@ export default class Modal {
     }
     this.modalElement = null;
     this.nicknameInput = null;
+    this.errorElement = null;
   }
 }

@@ -18,6 +18,10 @@ export default class Api {
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         const message = errorData.message || response.statusText || 'Ошибка регистрации';
+        if (response.status === 409) {
+          throw new Error('Это имя уже занято. Придумай другой никнейм!');
+        }
+
         throw new Error(message);
       }
 
