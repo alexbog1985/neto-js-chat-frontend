@@ -8,7 +8,7 @@ export default class WS {
   connect(user) {
     this.currentUser = user;
 
-    this.socket = new WebSocket('ws://localhost:3000');
+    this.socket = new WebSocket('wss://neto-js-chat-backend.onrender.com');
 
     this.socket.onopen = () => {
       console.log('WebSocket Connected!');
@@ -36,7 +36,7 @@ export default class WS {
     this.socket.onclose = (event) => {
       console.log('WebSocket closed:', event.code, event.reason);
     };
-    
+
     this.socket.onerror = (error) => {
       console.error('WebSocket error:', error);
     };

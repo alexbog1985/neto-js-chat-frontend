@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:3000';
+const apiUrl = 'https://neto-js-chat-backend.onrender.com';
 
 export default class Api {
   async registerUser(nickName) {
