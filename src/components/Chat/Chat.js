@@ -3,7 +3,7 @@ import ChatView from '../ChatView/ChatView';
 import Modal from '../Modal/Modal';
 import WS from '../../services/ws';
 
-export default class Chat {
+export class Chat {
   constructor(root) {
     this.container = root;
     this.currentUser = null;
@@ -48,7 +48,6 @@ export default class Chat {
 
         this.modal.hideModal();
         this.socket.connect(this.currentUser);
-        this.socket.onMessage(this.handleNewMessage);
       }
     } catch (error) {
       console.error('Ошибка регистрации: ', error);
@@ -69,7 +68,7 @@ export default class Chat {
   }
 
   handleNewMessage(messageData) {
-    const isOwnMessage = this.currentUser && messageData && messageData.user.id === this.currentUser.id;
+    const isOwnMessage = !!this.currentUser && !!messageData?.user && messageData.user.id === this.currentUser.id;
 
     this.chatView.addMessage(messageData, isOwnMessage);
   }

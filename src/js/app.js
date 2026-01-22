@@ -1,4 +1,4 @@
-import Chat from '../components/Chat/Chat';
+import { Chat } from '../components/Chat/Chat';
 
 const root = document.querySelector('#root');
 

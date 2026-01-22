@@ -3,7 +3,6 @@ import './ChatView.css';
 export default class ChatView {
   constructor() {
     this.chatContainer = null;
-    this.chatContainer = null;
     this.messagesContainer = null;
     this.messageForm = null;
     this.messageInput = null;
