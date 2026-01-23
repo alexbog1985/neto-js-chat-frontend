@@ -3,7 +3,7 @@ import ChatView from '../ChatView/ChatView';
 import Modal from '../Modal/Modal';
 import WS from '../../services/ws';
 
-export class Chat {
+export default class Chat {
   constructor(root) {
     this.container = root;
     this.currentUser = null;
