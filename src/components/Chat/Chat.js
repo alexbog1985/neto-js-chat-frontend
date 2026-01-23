@@ -68,7 +68,7 @@ export class Chat {
   }
 
   handleNewMessage(messageData) {
-    const isOwnMessage = !!this.currentUser && !!messageData?.user && messageData.user.id === this.currentUser.id;
+    const isOwnMessage = this.currentUser && messageData.user && messageData.user && messageData.user.id === this.currentUser.id;
 
     this.chatView.addMessage(messageData, isOwnMessage);
   }
